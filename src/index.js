@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
-export default () => (WrappedComponent) => {
+export default (multiplier = 80) => (WrappedComponent) => {
     return class extends React.Component {
         static propTypes = {
             multiplier: PropTypes.number,
         };
         static defaultProps = {
-            multiplier: 80,
+            multiplier,
         };
 
         constructor(props) {
