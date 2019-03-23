@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
+import throttle from 'lodash.throttle';
 
 export default (multiplier = 80) => (WrappedComponent) => {
     return class extends React.Component {
@@ -21,7 +21,7 @@ export default (multiplier = 80) => (WrappedComponent) => {
             return Math.round(sign * this.props.multiplier);
         };
 
-        updateScrolling = _.throttle((e) => {
+        updateScrolling = throttle((e) => {
             window.scrollBy(0, this.getScrollY(e.clientY));
             this.currentY = e.clientY;
         }, 50);

@@ -16,6 +16,11 @@
     "url": "https://github.com/kurpachsv/dnd-scrolling/issues"
   },
   "homepage": "https://github.com/kurpachsv/dnd-scrolling#readme",
+  "dependencies": {
+    "lodash.throttle": "^4.1.1",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.5"
+  },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "eslint": "^5.15.3",
