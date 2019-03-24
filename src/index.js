@@ -2,20 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import throttle from 'lodash.throttle';
 
-export default (multiplier = 80) => (WrappedComponent) => {
+export default (speed = 80) => (WrappedComponent) => {
     return class extends React.Component {
         static propTypes = {
-            multiplier: PropTypes.number,
+            speed: PropTypes.number,
         };
         static defaultProps = {
-            multiplier,
+            speed,
         };
 
         currentY = 0;
 
         getScrollY = (clientY) => {
             const sign = Math.sign(clientY - this.currentY);
-            return Math.round(sign * this.props.multiplier);
+            return Math.round(sign * this.props.speed);
         };
 
         updateScrolling = throttle((e) => {
@@ -33,7 +33,7 @@ export default (multiplier = 80) => (WrappedComponent) => {
 
         render() {
             const {
-                multiplier, // ignore decorator's props
+                speed, // ignore decorator's props
                 ...props
             } = this.props;
             return <WrappedComponent {...props} />;
