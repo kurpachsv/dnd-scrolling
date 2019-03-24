@@ -11,10 +11,7 @@ export default (multiplier = 80) => (WrappedComponent) => {
             multiplier,
         };
 
-        constructor(props) {
-            super(props);
-            this.currentY = 0;
-        }
+        currentY = 0;
 
         getScrollY = (clientY) => {
             const sign = Math.sign(clientY - this.currentY);
@@ -35,7 +32,11 @@ export default (multiplier = 80) => (WrappedComponent) => {
         }
 
         render() {
-            return <WrappedComponent {...this.props} />;
+            const {
+                multiplier, // ignore decorator's props
+                ...props
+            } = this.props;
+            return <WrappedComponent {...props} />;
         }
     };
 };
