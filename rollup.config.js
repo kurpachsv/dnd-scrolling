@@ -5,6 +5,7 @@ const config = {
     input: 'src/index.js',
     external: ['react'],
     output: {
+        file: 'dist/index.js',
         format: 'umd',
         name: 'dnd-scrolling',
         globals: {

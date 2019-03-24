@@ -1,11 +1,11 @@
 {
   "name": "@kurpachsv/dnd-scrolling",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Simple decorator which allow to scroll window in dnd dragging.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c -o dist/dnd-scrolling.min.js",
+    "build": "rollup -c -o dist/index.js",
     "prepare": "rm -rf ./dist && npm run build"
   },
   "repository": {
