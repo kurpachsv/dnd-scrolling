@@ -1,5 +1,5 @@
 {
-  "name": "dnd-scrolling",
+  "name": "@kurpachsv/dnd-scrolling",
   "version": "0.0.1",
   "description": "Simple decorator which allow to scroll window in dnd dragging.",
   "main": "index.js",
@@ -37,5 +37,13 @@
     "rollup": "^1.7.0",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-uglify": "^6.0.2"
-  }
+  },
+  "keywords": [
+    "react",
+    "component",
+    "drag-and-drop",
+    "dnd",
+    "scroll",
+    "scrolling"
+  ]
 }
