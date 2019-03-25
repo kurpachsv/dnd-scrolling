@@ -2,25 +2,40 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import throttle from 'lodash.throttle';
 
-export default (speed = 80) => (WrappedComponent) => {
+export default (
+    multiplier = 60,
+    threshold = 100,
+    noScrollAreaHeight = 600
+) => (WrappedComponent) => {
     return class extends React.Component {
         static propTypes = {
-            speed: PropTypes.number,
+            multiplier: PropTypes.number,
+            threshold: PropTypes.number,
+            noScrollAreaHeight: PropTypes.number,
         };
         static defaultProps = {
-            speed,
+            multiplier,
+            threshold,
+            noScrollAreaHeight,
         };
 
         currentY = 0;
 
+        getNoScrollAreaHeight() {
+            return this.props.noScrollAreaHeight || window.innerHeight;
+        }
+
         getScrollY = (clientY) => {
             const sign = Math.sign(clientY - this.currentY);
-            return Math.round(sign * this.props.speed);
+            return Math.round(sign * this.props.multiplier);
         };
 
         updateScrolling = throttle((e) => {
-            window.scrollBy(0, this.getScrollY(e.clientY));
-            this.currentY = e.clientY;
+            if (e.clientY <= this.props.threshold ||
+                e.clientY >= this.getNoScrollAreaHeight() - this.props.threshold) {
+                window.scrollBy(0, this.getScrollY(e.clientY));
+                this.currentY = e.clientY;
+            }
         }, 50);
 
         componentDidMount() {
@@ -33,7 +48,10 @@ export default (speed = 80) => (WrappedComponent) => {
 
         render() {
             const {
-                speed, // ignore decorator's props
+                // ignore decorator's props
+                multiplier,
+                threshold,
+                boxHeight,
                 ...props
             } = this.props;
             return <WrappedComponent {...props} />;
