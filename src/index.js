@@ -51,7 +51,7 @@ export default (
                 // ignore decorator's props
                 speed,
                 threshold,
-                boxHeight,
+                noScrollAreaHeight,
                 ...props
             } = this.props;
             return <WrappedComponent {...props} />;
