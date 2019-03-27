@@ -1,60 +1,147 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import throttle from 'lodash.throttle';
+import raf from 'raf';
+import {Consumer as DragDropContextConsumer} from 'react-dnd/lib/DragDropContext';
+import hoist from 'hoist-non-react-statics';
 
-export default (
-    speed = 60,
-    threshold = 100,
-    noScrollAreaHeight = 600
-) => (WrappedComponent) => {
-    return class extends React.Component {
+function createStrength(threshold = 100) {
+    return function defaultVerticalStrength({
+                                                y, h,
+                                            }, point) {
+        const buffer = Math.min(h / 2, threshold);
+        const inBox = point.y >= y && point.y <= y + h;
+        if (inBox) {
+            if (point.y < y + buffer) {
+                return (point.y - y - buffer) / buffer;
+            }
+            if (point.y > (y + h - buffer)) {
+                return -(y + h - point.y - buffer) / buffer;
+            }
+        }
+        return 0;
+    };
+}
+
+const defaultVerticalStrength = createStrength();
+
+function getCoords(e) {
+    if (e.type === 'touchmove') {
+        return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+    }
+    return { x: e.clientX, y: e.clientY };
+}
+
+export function createScrollingComponent(WrappedComponent) {
+    class ScrollingComponent extends React.Component {
         static propTypes = {
             speed: PropTypes.number,
-            threshold: PropTypes.number,
-            noScrollAreaHeight: PropTypes.number,
+            noScrollingAreaHeight: PropTypes.number,
         };
         static defaultProps = {
-            speed,
-            threshold,
-            noScrollAreaHeight,
+            speed: 60,
+            noScrollingAreaHeight: 800,
         };
 
-        currentY = 0;
-
-        getNoScrollAreaHeight() {
-            return this.props.noScrollAreaHeight || window.innerHeight;
-        }
-
-        getScrollY = (clientY) => {
-            const sign = Math.sign(clientY - this.currentY);
-            return Math.round(sign * this.props.speed);
-        };
+        scaleY = 0;
+        dragging = false;
 
         updateScrolling = throttle((e) => {
-            if (e.clientY <= this.props.threshold ||
-                e.clientY >= this.getNoScrollAreaHeight() - this.props.threshold) {
-                window.scrollBy(0, this.getScrollY(e.clientY));
-                this.currentY = e.clientY;
+            if (!this.dragging) {
+                return;
             }
-        }, 50);
+
+            const coords = getCoords(e);
+            const box = {
+                y: 0, h: this.props.noScrollingAreaHeight,
+            };
+            this.scaleY = defaultVerticalStrength(box, coords);
+
+            if (this.scaleY === 0) {
+                this.stopScrolling();
+                return;
+            }
+
+            if (!this.frame && this.scaleY) {
+                this.startScrolling();
+            }
+        }, 100, {trailing: false});
+
+        startScrolling() {
+            const tick = () => {
+                const {scaleY} = this;
+                const {speed} = this.props;
+
+                window.scrollBy(0, speed * scaleY);
+
+                this.frame = raf(tick);
+            };
+
+            tick();
+        }
+
+        stopScrolling() {
+            this.scaleY = 0;
+            if (this.frame) {
+                raf.cancel(this.frame);
+                this.frame = null;
+            }
+        }
+
+        handleMonitorChange() {
+            const {dragDropManager} = this.props;
+            const isDragging = dragDropManager
+                .getMonitor()
+                .isDragging();
+
+            if (!this.dragging && isDragging) {
+                this.dragging = true;
+            } else if (this.dragging && !isDragging) {
+                this.dragging = false;
+                this.stopScrolling();
+            }
+        }
 
         componentDidMount() {
             window.document.body.addEventListener('dragover', this.updateScrolling);
+            window.document.body.addEventListener('touchmove', this.updateScrolling);
+
+            const {dragDropManager} = this.props;
+            this.clearMonitorSubscription = dragDropManager
+                .getMonitor()
+                .subscribeToStateChange(() => this.handleMonitorChange());
         }
 
         componentWillUnmount() {
             window.document.body.removeEventListener('dragover', this.updateScrolling);
+            window.document.body.removeEventListener('touchmove', this.updateScrolling);
+
+            this.clearMonitorSubscription();
         }
 
         render() {
             const {
                 // ignore decorator's props
                 speed,
-                threshold,
-                noScrollAreaHeight,
+                noScrollingAreaHeight,
+                dragDropManager,
                 ...props
             } = this.props;
             return <WrappedComponent {...props} />;
         }
-    };
-};
+    }
+    return hoist(ScrollingComponent, WrappedComponent);
+}
+
+export default function createScrollingComponentWithConsumer(WrappedComponent) {
+    const ScrollingComponent = createScrollingComponent(WrappedComponent);
+    return props => (
+        <DragDropContextConsumer>
+            {({dragDropManager}) => (
+                dragDropManager === undefined
+                    ? null
+                    : <ScrollingComponent {...props} dragDropManager={dragDropManager} />
+            )}
+        </DragDropContextConsumer>
+    );
+}
