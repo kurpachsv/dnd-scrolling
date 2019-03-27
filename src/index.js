@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import throttle from 'lodash.throttle';
 import raf from 'raf';
-import {Consumer as DragDropContextConsumer} from 'react-dnd/lib/DragDropContext';
+import {DragDropContextConsumer} from 'react-dnd';
 import hoist from 'hoist-non-react-statics';
 
 function createStrength(threshold = 100) {
