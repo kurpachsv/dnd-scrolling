@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/kurpachsv/dnd-scrolling.git"
   },
-  "author": "kurpachsv",
+  "author": "Sergei Kurpach <kurpachsv@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/kurpachsv/dnd-scrolling/issues"
