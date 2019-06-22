@@ -1,30 +1,22 @@
 [![npm version](https://badge.fury.io/js/%40kurpachsv%2Fdnd-scrolling.svg)](https://badge.fury.io/js/%40kurpachsv%2Fdnd-scrolling)
 
-
 # @kurpachsv/dnd-scrolling
 
-Simple decorator which allow to scroll window in dnd dragging.
+Simple component which allows to scroll window in dnd dragging.
+
+![demo](demo.gif)
 
 ## Usage
 
 ```bash
-npm i --save @kurpachsv/dnd-scrolling
+import withScrolling from '@kurpachsv/dnd-scrolling';
+
+const ScrollingContainer = withScrolling('div');
+
+and wrap your component into <ScrollingContainer>
+
+For more details see examples.
 ```
-
-```javascript
-import allowScrolling from '@kurpachsv/dnd-scrolling';
-```
-
-And you can use this decorator in your component. For example:
-
-```javascript
-@allowScrolling(80)
-class App extends React.Component {
-    render() {}
-}
-```
-
-`80` - it is a speed of scrolling.
 
 ## License
 

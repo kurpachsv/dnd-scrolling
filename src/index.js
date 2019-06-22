@@ -7,8 +7,8 @@ import hoist from 'hoist-non-react-statics';
 
 function createStrength(threshold = 100) {
     return function defaultVerticalStrength({
-                                                y, h,
-                                            }, point) {
+        y, h,
+    }, point) {
         const buffer = Math.min(h / 2, threshold);
         const inBox = point.y >= y && point.y <= y + h;
         if (inBox) {
@@ -27,9 +27,9 @@ const defaultVerticalStrength = createStrength();
 
 function getCoords(e) {
     if (e.type === 'touchmove') {
-        return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+        return {x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY};
     }
-    return { x: e.clientX, y: e.clientY };
+    return {x: e.clientX, y: e.clientY};
 }
 
 export function createScrollingComponent(WrappedComponent) {
@@ -40,7 +40,7 @@ export function createScrollingComponent(WrappedComponent) {
         };
         static defaultProps = {
             speed: 60,
-            noScrollingAreaHeight: 800,
+            noScrollingAreaHeight: 600,
         };
 
         scaleY = 0;
