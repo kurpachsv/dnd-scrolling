@@ -27,7 +27,7 @@ class PageWithVerticalScroll extends React.PureComponent {
 
     findItem = (id) => {
         const {items} = this.state;
-        const item = items[id];
+        const item = id;
 
         return {
             item,
