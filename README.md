@@ -8,15 +8,15 @@ Simple component which allows to scroll window in dnd dragging.
 
 ## Usage
 
-```bash
+```javascript
 import withScrolling from '@kurpachsv/dnd-scrolling';
 
 const ScrollingContainer = withScrolling('div');
 
 and wrap your component into <ScrollingContainer>
+```
 
 For more details see examples.
-```
 
 ## License
 
