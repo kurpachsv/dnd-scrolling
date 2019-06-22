@@ -2,7 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 
-import {DragSource, DropTarget} from 'react-dnd';
+import {
+    DragSource,
+    DropTarget,
+} from 'react-dnd';
 
 const dragSourceCollect = (connect, monitor) => ({
     connectDragSource: connect.dragSource(),
@@ -51,13 +54,18 @@ class LayoutItem extends React.PureComponent {
         return connectDragSource(
             connectDropTarget(
                 <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     boxSizing: 'border-box',
                     margin: '20px',
                     width: '200px',
                     height: '250px',
                     backgroundColor: '#00a39e',
                     border: '8px dotted #000000',
+                    fontSize: '18px',
                 }}>
+                    {this.props.id}
                 </div>
             )
         );

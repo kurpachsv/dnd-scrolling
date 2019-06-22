@@ -28,8 +28,8 @@ class Layout extends React.PureComponent {
                     {this.props.items.map((el, index) => {
                         return (
                             <LayoutItem 
-                                key={index}
-                                id={index}
+                                key={el}
+                                id={el}
                                 moveItem={this.props.moveItem}
                                 findItem={this.props.findItem}
                             />

@@ -23,17 +23,11 @@ class PageWithVerticalScroll extends React.PureComponent {
                 ],
             },
         }));
-
-        if (!this.state.orderWasChanged) {
-            this.setState({
-                orderWasChanged: true,
-            });
-        }
     };
 
     findItem = (id) => {
         const {items} = this.state;
-        const item = _.find(items, el => el.itemId === id) || {};
+        const item = items[id];
 
         return {
             item,

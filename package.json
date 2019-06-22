@@ -1,6 +1,6 @@
 {
   "name": "@kurpachsv/dnd-scrolling",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Simple component which allows to scroll window in dnd dragging.",
   "main": "dist/index.js",
   "scripts": {
@@ -24,7 +24,7 @@
     "hoist-non-react-statics": "^3.3.0",
     "lodash.throttle": "^4.1.1",
     "raf": "^3.4.1",
-    "react-dnd": "^8.0.3"
+    "react-dnd": "^7.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -46,7 +46,7 @@
     "lodash": "^4.17.11",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
-    "react-dnd": "^8.0.3",
+    "react-dnd": "^7.0.2",
     "react-dnd-html5-backend": "^8.0.3",
     "react-dom": "^16.8.6",
     "rimraf": "^2.6.3",
