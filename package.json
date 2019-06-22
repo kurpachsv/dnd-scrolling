@@ -1,7 +1,7 @@
 {
   "name": "@kurpachsv/dnd-scrolling",
-  "version": "0.0.5",
-  "description": "Simple compoennt which allows to scroll window in dnd dragging.",
+  "version": "0.0.6",
+  "description": "Simple component which allows to scroll window in dnd dragging.",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
