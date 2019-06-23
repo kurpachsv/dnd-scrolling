@@ -3,47 +3,48 @@ import PropTypes from 'prop-types';
 import throttle from 'lodash.throttle';
 import raf from 'raf';
 import {DndContext} from 'react-dnd';
-import hoist from 'hoist-non-react-statics';
 
-function createStrength(threshold = 100) {
-    return function defaultVerticalStrength({
-        y, h,
-    }, point) {
-        const buffer = Math.min(h / 2, threshold);
-        const inBox = point.y >= y && point.y <= y + h;
-        if (inBox) {
-            if (point.y < y + buffer) {
-                return (point.y - y - buffer) / buffer;
-            }
-            if (point.y > (y + h - buffer)) {
-                return -(y + h - point.y - buffer) / buffer;
-            }
+const DEFAULT_SPEED = 60;
+const DEFAULT_AREA_HEIGHT = 600;
+const DEFAULT_THRESHOLD = 100;
+const TIMEOUT = 100;
+
+function calcScale(threshold, startY, endY, point) {
+    const inBox = point.y >= startY && point.y <= startY + endY;
+    if (inBox) {
+        if (point.y < startY + threshold) {
+            return (point.y - startY - threshold) / threshold;
         }
-        return 0;
+        if (point.y > (startY + endY - threshold)) {
+            return -(startY + endY - point.y - threshold) / threshold;
+        }
+    }
+    return 0;
+}
+
+function getCoords(e) {
+    return {
+        x: e.clientX,
+        y: e.clientY,
     };
 }
 
-const defaultVerticalStrength = createStrength();
-
-function getCoords(e) {
-    if (e.type === 'touchmove') {
-        return {x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY};
-    }
-    return {x: e.clientX, y: e.clientY};
-}
-
-export function createScrollingComponent(WrappedComponent) {
+function HOC(WrappedComponent) {
     class ScrollingComponent extends React.Component {
         static propTypes = {
             speed: PropTypes.number,
-            noScrollingAreaHeight: PropTypes.number,
+            area: PropTypes.number,
+            threshold: PropTypes.number,
         };
         static defaultProps = {
-            speed: 60,
-            noScrollingAreaHeight: 600,
+            speed: DEFAULT_SPEED,
+            area: DEFAULT_AREA_HEIGHT,
+            threshold: DEFAULT_THRESHOLD,
         };
 
-        scaleY = 0;
+        state = {};
+
+        scale = 0;
         dragging = false;
 
         updateScrolling = throttle((e) => {
@@ -52,36 +53,32 @@ export function createScrollingComponent(WrappedComponent) {
             }
 
             const coords = getCoords(e);
-            const box = {
-                y: 0, h: this.props.noScrollingAreaHeight,
-            };
-            this.scaleY = defaultVerticalStrength(box, coords);
+            this.scale = calcScale(this.props.threshold, 0, this.props.area, coords);
 
-            if (this.scaleY === 0) {
+            if (this.scale === 0) {
                 this.stopScrolling();
                 return;
             }
 
-            if (!this.frame && this.scaleY) {
+            if (!this.frame && this.scale) {
                 this.startScrolling();
             }
-        }, 100, {trailing: false});
+        }, TIMEOUT);
 
         startScrolling() {
             const tick = () => {
-                const {scaleY} = this;
+                const {scale} = this;
                 const {speed} = this.props;
 
-                window.scrollBy(0, speed * scaleY);
-
+                window.scrollBy(0, speed * scale);
                 this.frame = raf(tick);
             };
-
             tick();
         }
 
         stopScrolling() {
-            this.scaleY = 0;
+            this.scale = 0;
+            
             if (this.frame) {
                 raf.cancel(this.frame);
                 this.frame = null;
@@ -104,7 +101,6 @@ export function createScrollingComponent(WrappedComponent) {
 
         componentDidMount() {
             window.document.body.addEventListener('dragover', this.updateScrolling);
-            window.document.body.addEventListener('touchmove', this.updateScrolling);
 
             const {dragDropManager} = this.props;
             this.clearMonitorSubscription = dragDropManager
@@ -114,27 +110,26 @@ export function createScrollingComponent(WrappedComponent) {
 
         componentWillUnmount() {
             window.document.body.removeEventListener('dragover', this.updateScrolling);
-            window.document.body.removeEventListener('touchmove', this.updateScrolling);
 
             this.clearMonitorSubscription();
         }
 
         render() {
             const {
-                // ignore decorator's props
                 speed,
-                noScrollingAreaHeight,
+                area,
                 dragDropManager,
+                threshold,
                 ...props
             } = this.props;
             return <WrappedComponent {...props} />;
         }
     }
-    return hoist(ScrollingComponent, WrappedComponent);
+    return ScrollingComponent;
 }
 
-export default function createScrollingComponentWithConsumer(WrappedComponent) {
-    const ScrollingComponent = createScrollingComponent(WrappedComponent);
+export default function createScrollingComponent(WrappedComponent) {
+    const ScrollingComponent = HOC(WrappedComponent);
     return props => (
         <DndContext.Consumer>
             {({dragDropManager}) => (
