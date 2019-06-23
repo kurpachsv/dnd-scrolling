@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import throttle from 'lodash.throttle';
 import raf from 'raf';
 import {DndContext} from 'react-dnd';
-import hoist from 'hoist-non-react-statics';
 
 const DEFAULT_SPEED = 60;
 const DEFAULT_AREA_HEIGHT = 600;
@@ -30,7 +29,7 @@ function getCoords(e) {
     };
 }
 
-export function createScrollingComponent(WrappedComponent) {
+function HOC(WrappedComponent) {
     class ScrollingComponent extends React.Component {
         static propTypes = {
             speed: PropTypes.number,
@@ -72,15 +71,14 @@ export function createScrollingComponent(WrappedComponent) {
                 const {speed} = this.props;
 
                 window.scrollBy(0, speed * scale);
-
                 this.frame = raf(tick);
             };
-
             tick();
         }
 
         stopScrolling() {
             this.scale = 0;
+            
             if (this.frame) {
                 raf.cancel(this.frame);
                 this.frame = null;
@@ -127,11 +125,11 @@ export function createScrollingComponent(WrappedComponent) {
             return <WrappedComponent {...props} />;
         }
     }
-    return hoist(ScrollingComponent, WrappedComponent);
+    return ScrollingComponent;
 }
 
-export default function createScrollingComponentWithConsumer(WrappedComponent) {
-    const ScrollingComponent = createScrollingComponent(WrappedComponent);
+export default function createScrollingComponent(WrappedComponent) {
+    const ScrollingComponent = HOC(WrappedComponent);
     return props => (
         <DndContext.Consumer>
             {({dragDropManager}) => (
