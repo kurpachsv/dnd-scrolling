@@ -5,7 +5,7 @@ import update from 'immutability-helper';
 
 import Layout from './Layout';
 
-class PageWithVerticalScroll extends React.PureComponent {
+class PageWithScroll extends React.PureComponent {
     static propTypes = {};
     static defaultProps = {};
     state = {
@@ -46,4 +46,4 @@ class PageWithVerticalScroll extends React.PureComponent {
     }
 }
 
-export default PageWithVerticalScroll;
+export default PageWithScroll;

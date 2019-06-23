@@ -1,8 +1,8 @@
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import PageWithVerticalScroll from '../examples/PageWithVerticalScroll';
+import PageWithScroll from '../examples/PageWithScroll';
 
-storiesOf('PageWithVerticalScroll', module)
-    .add('with Vertical Scrolling', () => (
-        <PageWithVerticalScroll />
+storiesOf('Examples', module)
+    .add('with scrolling', () => (
+        <PageWithScroll />
     )); 
