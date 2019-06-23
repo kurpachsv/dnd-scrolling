@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import throttle from 'lodash.throttle';
 import raf from 'raf';
-import {DragDropContextConsumer} from 'react-dnd';
+import {DndContext} from 'react-dnd';
 import hoist from 'hoist-non-react-statics';
 
 function createStrength(threshold = 100) {
@@ -136,12 +136,12 @@ export function createScrollingComponent(WrappedComponent) {
 export default function createScrollingComponentWithConsumer(WrappedComponent) {
     const ScrollingComponent = createScrollingComponent(WrappedComponent);
     return props => (
-        <DragDropContextConsumer>
+        <DndContext.Consumer>
             {({dragDropManager}) => (
                 dragDropManager === undefined
                     ? null
                     : <ScrollingComponent {...props} dragDropManager={dragDropManager} />
             )}
-        </DragDropContextConsumer>
+        </DndContext.Consumer>
     );
 }
